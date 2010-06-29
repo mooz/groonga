@@ -53,7 +53,7 @@ class OptionTest < Test::Unit::TestCase
     usage = 'Usage: groonga \[options\.\.\.\] \[dest\]$'
     %w[-e -l -a -p -i -t
        --admin-html-path --protocol --log-path
-       --query-log-path --pid-file --config-path].each do |option|
+       --query-log-path --pid-file].each do |option|
       status = assert_run_groonga("", /: option '#{option}' needs argument\.$/, option)
       assert_not_predicate(status, :success?)
     end
