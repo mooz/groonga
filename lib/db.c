@@ -2218,6 +2218,10 @@ accelerated_table_group(grn_ctx *ctx, grn_obj *table, grn_obj *key, grn_obj *res
               }
               id_ = (grn_id *)_grn_table_key(ctx, table, id, &key_size);
               v = grn_ra_ref_cache(ctx, ra, *id_, &cache);
+              if (idp && *((grn_id *)v) &&
+                  grn_table_at(ctx, range, *((grn_id *)v)) == GRN_ID_NIL) {
+                continue;
+              }
               if ((!idp || *((grn_id *)v)) &&
                   grn_table_add_v(ctx, res, v, element_size, &value, NULL)) {
                 grn_table_add_subrec(res, value, ri ? ri->score : 0, NULL, 0);
@@ -6672,6 +6676,7 @@ grn_column_index(grn_ctx *ctx, grn_obj *obj, grn_operator op,
     case GRN_OP_GREATER :
     case GRN_OP_LESS_EQUAL :
     case GRN_OP_GREATER_EQUAL :
+    case GRN_OP_CALL :
       for (hooks = DB_OBJ(obj)->hooks[GRN_HOOK_SET]; hooks; hooks = hooks->next) {
         default_set_value_hook_data *data = (void *)NEXT_ADDR(hooks);
         grn_obj *target = grn_ctx_at(ctx, data->target);
